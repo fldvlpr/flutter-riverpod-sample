@@ -27,10 +27,12 @@ class TodoListNotifier extends AsyncNotifier<List<Todo>> {
   }
 }
 
-final todoListProvider = AsyncNotifierProvider<TodoListNotifier, List<Todo>>(() {
+final todoListProvider = AsyncNotifierProvider<TodoListNotifier, List<Todo>>(
+  () {
     return TodoListNotifier();
-});
+  },
+);
 
 final todoDetailProvider = FutureProvider.family<Todo, int>((ref, id) async {
-    return ref.watch(todoRepositoryProvider).getTodoById(id);
+  return ref.watch(todoRepositoryProvider).getTodoById(id);
 });

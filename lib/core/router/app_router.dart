@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_sample/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:flutter_riverpod_sample/features/profile/presentation/profile_screen.dart';
-import 'package:flutter_riverpod_sample/features/todos/presentation/providers/screens/create_todo_screen.dart';
-import 'package:flutter_riverpod_sample/features/todos/presentation/providers/screens/home_screen.dart';
-import 'package:flutter_riverpod_sample/features/todos/presentation/providers/screens/todo_detail_screen.dart';
+import 'package:flutter_riverpod_sample/features/todos/presentation/screens/create_todo_screen.dart';
+import 'package:flutter_riverpod_sample/features/todos/presentation/screens/home_screen.dart';
+import 'package:flutter_riverpod_sample/features/todos/presentation/screens/todo_detail_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
