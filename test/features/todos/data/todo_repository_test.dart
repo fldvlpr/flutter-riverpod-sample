@@ -45,4 +45,42 @@ void main() {
       );
     });
   });
+
+      test('should return a single todo by id on success', () async {
+      // 1. Arrange
+      when(() => mockApiClient.get(any())).thenAnswer(
+        (_) async => {'id': 99, 'title': 'Test Single', 'completed': true, 'userId': 1},
+      );
+
+      // 2. Act
+      final todo = await todoRepository.getTodoById(99);
+
+      // 3. Assert
+      expect(todo.id, 99);
+      expect(todo.title, 'Test Single');
+      
+      // Bonus: Verify that the Repository actually asked for the correct URL!
+      verify(() => mockApiClient.get('/todos/99')).called(1);
+    });
+
+    test('should create and return a new todo on success', () async {
+      // 1. Arrange (Notice we are mocking the `post` method now!)
+      when(() => mockApiClient.post(any(), any())).thenAnswer(
+        (_) async => {'id': 100, 'title': 'New Todo', 'completed': false, 'userId': 1},
+      );
+
+      // 2. Act
+      final todo = await todoRepository.createTodo('New Todo');
+
+      // 3. Assert
+      expect(todo.id, 100);
+      expect(todo.title, 'New Todo');
+      
+      // Bonus: Verify the Repository sent the correct JSON body to the API!
+      verify(() => mockApiClient.post('/todos', {
+        'title': 'New Todo',
+        'completed': false,
+        'userId': 1,
+      })).called(1);
+    });
 }
