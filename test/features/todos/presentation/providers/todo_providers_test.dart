@@ -71,7 +71,7 @@ void main() {
     });    
   });
 
-    group('TodoDetailProvider Tests', () {
+  group('TodoDetailProvider Tests', () {
     test('fetches a single todo by id', () async {
       // 1. Arrange
       final fakeTodo = Todo(id: 99, userId: 1, title: 'Detail Test', completed: false);

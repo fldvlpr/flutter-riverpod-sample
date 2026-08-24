@@ -77,6 +77,31 @@ void main() {
 
 This is where Riverpod testing shines. Unlike BLoC, where you test a standalone class, Riverpod providers are global and need an environment to run in. We provide this environment using a `ProviderContainer`.
 
+### The Mental Model: 5 Steps to Test any Provider
+When sitting down to test a Riverpod Provider, follow this exact thought process:
+
+**Step 1: Identify Dependencies**
+Look at the provider's code. Find every `ref.watch` and `ref.read`. 
+*(Example: `TodoListNotifier` watches `todoRepositoryProvider`. Therefore, it depends on the Repository).*
+
+**Step 2: Create the Fakes (Mocking)**
+Create a fake version of every dependency you found so you don't hit the real internet or database during the test.
+*(Example: `class MockTodoRepository extends Mock implements TodoRepository {}`)*
+
+**Step 3: Build the Bubble (Dependency Injection)**
+Providers need a `ProviderContainer` (a bubble) to live in. When you build this bubble, use `overrides` to swap out the real dependencies with your fakes.
+*(Example: `todoRepositoryProvider.overrideWithValue(mockRepository)`)*
+
+**Step 4: Identify Scenarios**
+What can this Provider actually do? Look at its methods.
+*(Example: It has `build()` which loads initial data, and `addTodo()` which adds data. That means we need at least two tests).*
+
+**Step 5: Execute the AAA Pattern**
+For each scenario, write the test:
+1. **Arrange:** Tell your mock how to reply when the Provider calls it.
+2. **Act:** Trigger the method on the Provider.
+3. **Assert:** Check the new state of the Provider, and `verify()` that the mock was called correctly.
+
 ### The Magic of `ProviderContainer` and `overrides`
 A `ProviderContainer` is essentially a headless `ProviderScope`. It holds the state of your app in memory.
 When testing, we don't want our providers to use the *real* repository. We use the `overrides` list to intercept the dependency tree.
@@ -127,6 +152,12 @@ void main() {
   });
 }
 ```
+
+### ProviderContainer vs ProviderScope
+Here is the secret to Riverpod testing: **`ProviderContainer` and `ProviderScope` are exactly the same thing.** They both act as the "box" that holds all of your Riverpod state. The only difference is whether you are testing Dart logic or Flutter UI.
+
+- **`ProviderContainer`**: A pure Dart object. It knows nothing about Flutter Widgets. We use it when testing **Classes** (Repositories, Notifiers, Services) because it is incredibly fast and doesn't require booting up the Flutter UI engine.
+- **`ProviderScope`**: A Flutter `Widget` that has a `ProviderContainer` hidden inside it. We use it when testing **Screens/Widgets** because `ConsumerWidget`s literally cannot render unless they can climb the Widget tree and find a `ProviderScope` to connect to.
 
 ## 4. Widget Testing the Presentation Layer (UI)
 
